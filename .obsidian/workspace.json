@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Common Ports/22 - SSH.md",
+                "file": "Common Ports/23 - Telnet.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "22 - SSH"
+              "title": "23 - Telnet"
             }
           }
         ],
@@ -79,8 +79,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 281.5091781616211,
-    "collapsed": true
+    "width": 281.5091781616211
   },
   "right": {
     "id": "e2ac48fc9893d118",
@@ -188,11 +187,12 @@
   },
   "active": "fec252110c2cad9f",
   "lastOpenFiles": [
+    "Common Ports/22 - SSH.md",
+    "Common Ports/23 - Telnet.md",
     "Networking/Network Security/Proxy.md",
     "Networking/Network Security/VPN.md",
     "Untitled.md",
     "Networking/Network Security/Port Forwarding.md",
-    "Common Ports/22 - SSH.md",
     "Networking/Network Security",
     "Common Ports/20, 21 - FTP.md",
     "Networking/Network Devices.md",
