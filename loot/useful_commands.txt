@@ -1,0 +1,17 @@
+Add Hostname to /etc/hosts
+
+echo "10.129.x.x mail001.enigma.htb" | sudo tee -a /etc/hosts
+
+Description:
+
+Adds a new hostname-to-IP mapping to the local /etc/hosts file.
+Allows your machine to resolve mail001.enigma.htb to the specified IP without using DNS.
+Commonly used in pentesting when a target uses virtual hosts (vHosts) or has no public DNS record.
+
+Command Breakdown:
+
+echo "IP hostname" → Creates the mapping text.
+| → Pipes the text to the next command.
+sudo → Runs the command with administrator privileges.
+tee -a → Appends (-a) the text to a file.
+/etc/hosts → Local file that maps hostnames to IP addresses.

@@ -1,0 +1,613 @@
+First Scan (Always) 
+ 
+
+1. FTP (21) 
+
+Check Anonymous Login 
+
+#ftp <IP> 
+
+Username: anonymous 
+
+Password: anonymous 
+
+Nmap Scripts 
+nmap --script ftp* -p21 <IP> 
+
+Download Everything 
+wget -m ftp://anonymous:anonymous@<IP> 
+
+Look for 
+
+    Anonymous login  
+
+    Writable directories  
+
+    Password files  
+
+    SSH keys  
+
+    Backup files 
+
+2. SSH (22) 
+Cannot exploit directly most of the time. 
+
+    Enumerate 
+
+    nmap --script ssh* -p22 <IP> 
+
+    ssh user@<IP> 
+     
+
+    Username Enumeration 
+
+    ssh-keyscan <IP> 
+     
+
+    Try Credentials 
+
+    hydra -L users.txt -P passwords.txt ssh://<IP> 
+
+ 
+
+3. Telnet (23) 
+
+telnet <IP> 
+
+Look for: 
+
+    Default credentials  
+
+    Hidden menus  
+
+    Debug shells 
+
+ 
+
+4. SMTP (25) 
+
+nc <IP> 25 
+
+ 
+
+Commands- 
+
+HELO test 
+
+   VRFY root 
+
+   EXPN users 
+
+ 
+
+Enumerate users 
+
+smtp-user-enum 
+
+ 
+
+Nmap 
+
+nmap --script smtp* -p25 <IP> 
+
+ 
+
+Look for 
+
+    Valid usernames  
+
+    Internal emails  
+
+    Password reset clues 
+
+ 
+
+5. DNS (53) 
+
+ 
+
+Zone Transfer 
+
+dig axfr @<IP> domain.local 
+
+ 
+
+Reverse Lookup 
+
+dig -x <IP> 
+
+ 
+
+Nmap 
+
+nmap --script dns* -p53 <IP> 
+
+ 
+
+Look for 
+
+    Hidden hosts  
+
+    Subdomains  
+
+    Internal servers 
+
+ 
+
+ 
+
+ 
+
+6. HTTP (80) 
+
+Always use 
+
+whatweb http://<IP> 
+
+nikto -h http://<IP> 
+
+curl http://<IP> 
+
+ 
+
+Directory Bruteforce 
+
+ffuf -u http://<IP>/FUZZ -w wordlist.txt 
+
+gobuster dir -u http://<IP> -w wordlist.txt 
+
+ 
+
+Technology Detection 
+wappalyzer 
+
+Look for 
+
+    robots.txt  
+
+    backup.zip  
+
+    admin panel  
+
+    uploads  
+
+    login  
+
+    source code  
+
+    comments 
+
+7. HTTPS (443) 
+
+    Same as HTTP 
+
+Also 
+
+    sslscan <IP> 
+
+    testssl.sh <IP> 
+
+ 
+
+8. SMB (139,445) 
+
+List Shares- 
+smbclient -L //<IP> 
+
+Anonymous- 
+smbclient //<IP>/share 
+
+Enum- 
+enum4linux -a <IP> 
+crackmapexec smb <IP> 
+smbmap -H <IP> 
+
+Look for 
+
+    Public shares  
+
+    Passwords  
+
+    Configs  
+
+    Backup files 
+
+9. RPC (111) 
+
+rpcinfo -p <IP> 
+showmount -e <IP> 
+
+Look for 
+
+    NFS exports 
+
+ 
+
+10. NFS (2049) 
+
+Mount- 
+showmount -e <IP> 
+sudo mount -t nfs <IP>:/share /mnt 
+
+Look for 
+
+    SSH keys  
+
+    Home directories  
+
+    Writable folders 
+
+ 
+
+11. MySQL (3306) 
+
+mysql -h <IP> -u root -p 
+
+Nmap- 
+nmap --script mysql* -p3306 <IP> 
+
+Look for 
+
+    Empty passwords  
+
+    Credentials  
+
+    Databases 
+
+ 
+
+12. PostgreSQL (5432) 
+
+psql -h <IP> -U postgres 
+
+Look for 
+
+    Default passwords  
+
+    Databases 
+
+13. Redis (6379) 
+
+redis-cli -h <IP> 
+
+Commands- 
+INFO 
+KEYS * 
+CONFIG GET * 
+CONFIG SET 
+
+Look for 
+
+    No authentication  
+
+    Writable directories 
+
+ 
+
+14. MongoDB (27017) 
+
+mongo <IP> 
+
+Look for 
+
+    No authentication  
+
+List DBs 
+
+show dbs 
+
+ 
+
+15. SNMP (161) 
+
+Community String 
+snmpwalk -v2c -c public <IP> 
+
+Enumerate- 
+onesixtyone 
+
+Look for 
+
+    Running processes  
+
+    Installed software  
+
+    Network info 
+
+ 
+
+16. RDP (3389) 
+
+xfreerdp /v:<IP> 
+
+Check 
+nmap --script rdp* -p3389 <IP> 
+
+ 
+
+17. VNC (5900) 
+
+vncviewer <IP> 
+
+Nmap 
+nmap --script vnc* -p5900 <IP> 
+
+Look for 
+
+    No password  
+
+    Weak passwords 
+
+Useful Nmap NSE Scripts 
+
+nmap --script vuln <IP> 
+
+nmap --script default <IP> 
+
+nmap --script discovery <IP> 
+
+nmap --script auth <IP> 
+
+nmap --script safe <IP> 
+
+nmap --script smb* 
+
+nmap --script ftp* 
+
+nmap --script http* 
+
+nmap --script mysql* 
+nmap --script ssh* 
+
+nmap --script smtp* 
+
+nmap --script dns* 
+
+ 
+
+ 
+
+ 
+
+SMB 139/445 (IMP) 
+
+2. NetBIOS Name Enumeration 
+
+nbtscan <IP> 
+
+Example output: 
+
+Hostname 
+
+Workgroup 
+
+MAC Address 
+
+Useful for: 
+
+    Computer name  
+
+    Windows domain  
+
+    Workgroup  
+
+    MAC address  
+
+ 
+
+3. Enumerate Shares 
+
+smbclient -L //<IP> -N 
+or 
+smbclient -L //<IP> 
+
+Look for: 
+ADMIN$ 
+IPC$ 
+Users 
+Backups 
+Public 
+Finance 
+Temp 
+
+ 
+
+4. Connect to Share 
+
+smbclient //<IP>/Public -N 
+
+or 
+
+smbclient //<IP>/Users 
+
+Commands inside: 
+Ls 
+cd 
+get file.txt 
+mget * 
+put shell.php 
+mkdir test 
+rm file 
+
+ 
+
+5. SMBMap 
+
+Shows permissions quickly. 
+smbmap -H <IP> 
+
+With credentials: 
+smbmap -H <IP> -u user -p pass 
+
+Look for 
+READ 
+WRITE 
+NO ACCESS 
+
+ 
+
+6. enum4linux 
+
+One of the best tools. 
+
+enum4linux -a <IP> 
+
+Gets: 
+
+    Users  
+
+    Groups  
+
+    Password policy  
+
+    Shares  
+
+    SID  
+
+    Workgroup  
+
+    OS version  
+
+ 
+
+7. enum4linux-ng 
+
+Better than enum4linux. 
+
+enum4linux-ng <IP> 
+
+ 
+
+8. CrackMapExec / NetExec 
+
+Anonymous login: 
+netexec smb <IP> 
+or 
+crackmapexec smb <IP> 
+
+With credentials: 
+netexec smb <IP> -u user -p pass 
+
+Enumerate users: 
+netexec smb <IP> --users 
+
+Shares: 
+netexec smb <IP> --shares 
+
+Sessions: 
+netexec smb <IP> --sessions 
+
+ 
+
+9. rpcclient 
+
+Anonymous: 
+rpcclient -U "" <IP> 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+  
+
+ 

