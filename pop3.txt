@@ -1,0 +1,55 @@
+# Port Discovery
+nmap -Pn -p110,995 <IP>
+nmap -sV -sC -p110,995 <IP>
+
+# Nmap NSE Scripts
+nmap --script pop3-capabilities -p110 <IP>
+nmap --script pop3-ntlm-info -p110 <IP>
+nmap --script pop3-brute -p110 <IP>
+nmap --script pop3-* -p110 <IP>
+
+# Banner Grabbing
+nc <IP> 110
+telnet <IP> 110
+
+# Manual POP3 Enumeration
+USER <username>
+PASS <password>
+STAT
+LIST
+UIDL
+RETR 1
+TOP 1 10
+DELE 1
+NOOP
+RSET
+QUIT
+
+# SSL/TLS POP3
+openssl s_client -connect <IP>:995
+
+# Login with OpenSSL
+USER <username>
+PASS <password>
+STAT
+LIST
+RETR 1
+QUIT
+
+# Brute Force (Authorized Testing Only)
+hydra -l <USER> -P /usr/share/wordlists/rockyou.txt pop3://<IP>
+hydra -L users.txt -P passwords.txt pop3://<IP>
+hydra -l <USER> -P /usr/share/wordlists/rockyou.txt pop3s://<IP>
+
+# Search for Public Exploits
+searchsploit pop3
+searchsploit dovecot
+searchsploit courier
+searchsploit cyrus
+
+# Metasploit
+msfconsole
+search pop3
+search dovecot
+search courier
+search cyrus

@@ -1,0 +1,70 @@
+# Port Discovery
+nmap -Pn -p111,2049 <IP>
+nmap -sV -sC -p111,2049 <IP>
+
+# Nmap NSE Scripts
+nmap --script rpcinfo -p111 <IP>
+nmap --script nfs-showmount -p111,2049 <IP>
+nmap --script nfs-ls -p111,2049 <IP>
+nmap --script nfs-statfs -p111,2049 <IP>
+nmap --script nfs-* -p111,2049 <IP>
+
+# RPC Enumeration
+rpcinfo -p <IP>
+
+# Enumerate NFS Exports
+showmount -e <IP>
+showmount -a <IP>
+showmount -d <IP>
+
+# Mount NFS Share
+sudo mkdir -p /mnt/nfs
+sudo mount -t nfs <IP>:/ /mnt/nfs
+sudo mount -t nfs <IP>:/<EXPORT> /mnt/nfs
+
+# File Enumeration
+ls -lah /mnt/nfs
+find /mnt/nfs -type f
+find /mnt/nfs -type d
+find /mnt/nfs -perm -4000
+find /mnt/nfs -name "*.conf"
+find /mnt/nfs -name "*.key"
+find /mnt/nfs -name "*.pem"
+find /mnt/nfs -name "*.db"
+find /mnt/nfs -name "*.bak"
+find /mnt/nfs -name "*.zip"
+find /mnt/nfs -name "*.tar*"
+
+# Search for Credentials
+grep -Ri "password" /mnt/nfs
+grep -Ri "passwd" /mnt/nfs
+grep -Ri "secret" /mnt/nfs
+grep -Ri "user" /mnt/nfs
+
+# Check Write Access
+touch /mnt/nfs/test
+echo "test" > /mnt/nfs/test
+rm /mnt/nfs/test
+
+# Check no_root_squash
+touch /mnt/nfs/rootcheck
+sudo chown root:root /mnt/nfs/rootcheck
+ls -l /mnt/nfs/rootcheck
+
+# Interesting Files
+cat /mnt/nfs/etc/passwd
+cat /mnt/nfs/etc/shadow
+ls -la /mnt/nfs/root
+ls -la /mnt/nfs/home
+find /mnt/nfs -name ".ssh"
+
+# Unmount
+sudo umount /mnt/nfs
+
+# Search for Public Exploits
+searchsploit nfs
+
+# Metasploit
+msfconsole
+search nfs
+search mountd

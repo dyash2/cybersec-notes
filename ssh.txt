@@ -1,0 +1,60 @@
+# Port Discovery
+nmap -Pn -p22 <IP>
+nmap -sV -sC -p22 <IP>
+
+# NSE Scripts
+nmap --script ssh-auth-methods -p22 <IP>
+nmap --script ssh-hostkey -p22 <IP>
+nmap --script ssh2-enum-algos -p22 <IP>
+nmap --script ssh-brute -p22 <IP>
+nmap --script ssh-* -p22 <IP>
+
+# Banner Grabbing
+nc <IP> 22
+telnet <IP> 22
+
+# SSH Login
+ssh <username>@<IP>
+ssh -v <username>@<IP>
+
+# Login with Private Key
+ssh -i id_rsa <username>@<IP>
+
+# Enumerate Host Keys
+ssh-keyscan <IP>
+
+# Supported Algorithms
+ssh -Q cipher
+ssh -Q mac
+ssh -Q key
+ssh -Q kex
+
+# Brute Force (Authorized Testing Only)
+hydra -l root -P /usr/share/wordlists/rockyou.txt ssh://<IP>
+hydra -L users.txt -P passwords.txt ssh://<IP>
+
+# Search for Public Exploits
+searchsploit openssh
+searchsploit ssh
+
+# Metasploit
+msfconsole
+search ssh
+search openssh
+
+# Once Logged In - Basic Enumeration
+whoami
+id
+hostname
+uname -a
+ip a
+ifconfig
+netstat -tulnp
+ss -tulnp
+sudo -l
+cat /etc/passwd
+cat /etc/shadow
+find / -perm -4000 -type f 2>/dev/null
+find / -writable -type d 2>/dev/null
+history
+env

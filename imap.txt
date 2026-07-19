@@ -1,0 +1,52 @@
+# Port Discovery
+nmap -Pn -p143,993 <IP>
+nmap -sV -sC -p143,993 <IP>
+
+# Nmap NSE Scripts
+nmap --script imap-capabilities -p143 <IP>
+nmap --script imap-brute -p143 <IP>
+nmap --script imap-ntlm-info -p143 <IP>
+nmap --script imap-* -p143 <IP>
+
+# Banner Grabbing
+nc <IP> 143
+telnet <IP> 143
+
+# Manual IMAP Enumeration
+a001 CAPABILITY
+a002 LOGIN <USER> <PASSWORD>
+a003 LIST "" "*"
+a004 SELECT INBOX
+a005 SEARCH ALL
+a006 FETCH 1 BODY[]
+a007 FETCH 1 BODY[HEADER]
+a008 LOGOUT
+
+# SSL/TLS IMAP
+openssl s_client -connect <IP>:993
+
+# Login with OpenSSL
+a001 LOGIN <USER> <PASSWORD>
+a002 LIST "" "*"
+a003 SELECT INBOX
+a004 SEARCH ALL
+a005 FETCH 1 BODY[]
+a006 LOGOUT
+
+# Brute Force (Authorized Testing Only)
+hydra -l <USER> -P /usr/share/wordlists/rockyou.txt imap://<IP>
+hydra -L users.txt -P passwords.txt imap://<IP>
+hydra -l <USER> -P /usr/share/wordlists/rockyou.txt imaps://<IP>
+
+# Search for Public Exploits
+searchsploit imap
+searchsploit dovecot
+searchsploit courier
+searchsploit cyrus
+
+# Metasploit
+msfconsole
+search imap
+search dovecot
+search courier
+search cyrus

@@ -1,0 +1,55 @@
+# Port Discovery
+nmap -Pn -p21 <IP>
+nmap -sV -sC -p21 <IP>
+
+# NSE Scripts
+nmap --script ftp-anon -p21 <IP>
+nmap --script ftp-bounce -p21 <IP>
+nmap --script ftp-syst -p21 <IP>
+nmap --script ftp-vsftpd-backdoor -p21 <IP>
+nmap --script ftp-* -p21 <IP>
+
+# Banner Grabbing
+nc <IP> 21
+telnet <IP> 21
+
+# Anonymous Login
+ftp <IP>
+# Username: anonymous
+# Password: anonymous
+
+# List Files
+pwd
+ls
+dir
+
+# Download Files
+get <filename>
+mget *
+
+# Upload Test
+put test.txt
+
+# Change Directory
+cd <directory>
+
+# Exit FTP
+bye
+
+# Brute Force (Authorized Testing Only)
+hydra -l anonymous -P /usr/share/wordlists/rockyou.txt ftp://<IP>
+hydra -L users.txt -P passwords.txt ftp://<IP>
+
+# Nmap Full Enumeration
+nmap -A -p21 <IP>
+
+# Search for Public Exploits
+searchsploit vsftpd
+searchsploit proftpd
+searchsploit pure-ftpd
+
+# Metasploit
+msfconsole
+search ftp
+search vsftpd
+search proftpd

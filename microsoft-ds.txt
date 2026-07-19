@@ -1,0 +1,72 @@
+# Port Discovery
+nmap -Pn -p445 <IP>
+nmap -sV -sC -p445 <IP>
+
+# Nmap NSE Scripts
+nmap --script smb-os-discovery -p445 <IP>
+nmap --script smb-enum-shares -p445 <IP>
+nmap --script smb-enum-users -p445 <IP>
+nmap --script smb-enum-domains -p445 <IP>
+nmap --script smb-enum-groups -p445 <IP>
+nmap --script smb-protocols -p445 <IP>
+nmap --script smb-security-mode -p445 <IP>
+nmap --script smb2-security-mode -p445 <IP>
+nmap --script smb2-capabilities -p445 <IP>
+nmap --script smb-vuln* -p445 <IP>
+nmap --script smb-* -p445 <IP>
+
+# SMB Enumeration
+smbclient -L //<IP> -N
+smbclient -L //<IP> -U guest
+smbclient //<IP>/<SHARE> -N
+smbclient //<IP>/<SHARE> -U <USER>
+
+# List Shares
+smbmap -H <IP>
+
+# Null Session
+rpcclient -U "" -N <IP>
+smbclient -L //<IP> -N
+
+# User & RID Enumeration
+enum4linux <IP>
+enum4linux-ng -A <IP>
+
+# Download Files
+prompt OFF
+recurse ON
+mget *
+
+# Check SMB Version
+nmap --script smb-protocols -p445 <IP>
+
+# Check for SMB Vulnerabilities
+nmap --script smb-vuln* -p445 <IP>
+
+# Brute Force (Authorized Testing Only)
+hydra -L users.txt -P passwords.txt smb://<IP>
+
+# Search for Public Exploits
+searchsploit samba
+searchsploit smb
+
+# Metasploit
+msfconsole
+search smb
+search samba
+search ms17-010
+search psexec
+
+# SMBMap Enumeration
+smbmap -H <IP>
+smbmap -H <IP> -u guest
+smbmap -H <IP> -u <USER> -p <PASSWORD>
+
+# CrackMapExec / NetExec
+netexec smb <IP>
+netexec smb <IP> -u '' -p ''
+netexec smb <IP> -u <USER> -p <PASSWORD>
+netexec smb <IP> --shares
+netexec smb <IP> --users
+netexec smb <IP> --sessions
+netexec smb <IP> --loggedon-users

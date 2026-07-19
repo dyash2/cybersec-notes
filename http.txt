@@ -1,0 +1,66 @@
+# Port Discovery
+nmap -Pn -p80 <IP>
+nmap -sV -sC -p80 <IP>
+
+# Nmap NSE Scripts
+nmap --script http-title -p80 <IP>
+nmap --script http-headers -p80 <IP>
+nmap --script http-enum -p80 <IP>
+nmap --script http-methods -p80 <IP>
+nmap --script http-auth* -p80 <IP>
+nmap --script http-vuln* -p80 <IP>
+nmap --script http-* -p80 <IP>
+
+# Banner Grabbing
+curl -I http://<IP>
+curl -v http://<IP>
+wget http://<IP>
+
+# Web Fingerprinting
+whatweb http://<IP>
+webtech -u http://<IP>
+httpx -u http://<IP>
+
+# Directory Enumeration
+gobuster dir -u http://<IP> -w /usr/share/wordlists/dirb/common.txt
+ffuf -u http://<IP>/FUZZ -w /usr/share/wordlists/dirb/common.txt
+dirsearch -u http://<IP>
+
+# Robots & Sitemap
+curl http://<IP>/robots.txt
+curl http://<IP>/sitemap.xml
+
+# Nikto Scan
+nikto -h http://<IP>
+
+# Screenshot
+eyewitness --web -f urls.txt
+gowitness scan single --url http://<IP>
+
+# SSL (if HTTPS)
+sslscan <IP>
+testssl.sh <IP>
+nmap --script ssl-* -p443 <IP>
+
+# Search for Public Exploits
+searchsploit apache
+searchsploit nginx
+searchsploit http
+
+# Metasploit
+msfconsole
+search http
+search apache
+search tomcat
+search wordpress
+search drupal
+search joomla
+
+# Manual Enumeration
+view-source:http://<IP>
+curl http://<IP>
+curl http://<IP>/robots.txt
+curl http://<IP>/server-status
+curl http://<IP>/.git/
+curl http://<IP>/.env
+curl http://<IP>/phpinfo.php
