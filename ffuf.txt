@@ -1,0 +1,122 @@
+# FFUF (Web Directory & File Enumeration)
+
+# Basic Directory Enumeration
+
+ffuf -u http://<IP>/FUZZ -w /usr/share/wordlists/dirb/common.txt
+
+# Common Wordlists
+
+/usr/share/wordlists/dirb/common.txt
+/usr/share/seclists/Discovery/Web-Content/common.txt
+/usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt
+/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt
+
+# Ignore 404 Responses
+
+ffuf -u http://<IP>/FUZZ \
+-w /usr/share/wordlists/dirb/common.txt \
+-fs <size>
+
+# Show Only HTTP 200
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-mc 200
+
+# Show 200,204,301,302,307,401,403
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-mc 200,204,301,302,307,401,403
+
+# Exclude Status Codes
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-fc 404
+
+# Recursive Scan
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-recursion
+
+# Scan File Extensions
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-e .php,.txt,.bak,.zip,.old,.conf
+
+# Find Backup Files
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-e .bak,.zip,.old,.tar,.gz
+
+# Find Configuration Files
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-e .conf,.config,.ini,.env
+
+# VHOST Enumeration
+
+ffuf -u http://<IP> \
+-H "Host: FUZZ.example.com" \
+-w subdomains.txt
+
+# Parameter Name Fuzzing (GET)
+
+ffuf -u "http://<IP>/index.php?FUZZ=test" \
+-w burp-parameter-names.txt
+
+# POST Parameter Fuzzing
+
+ffuf -X POST \
+-u http://<IP>/login.php \
+-d "FUZZ=test" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-w burp-parameter-names.txt
+
+# Header Fuzzing
+
+ffuf -u http://<IP> \
+-H "FUZZ: test" \
+-w headers.txt
+
+# Cookie Fuzzing
+
+ffuf -u http://<IP>/FUZZ \
+-b "PHPSESSID=YOURCOOKIE" \
+-w wordlist.txt
+
+# Authenticated Scan
+
+ffuf -u http://<IP>/FUZZ \
+-H "Authorization: Bearer TOKEN" \
+-w wordlist.txt
+
+# Save Output
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-o output.json
+
+# HTML Output
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-of html \
+-o report.html
+
+# Increase Threads
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-t 100
+
+# Rate Limit Requests
+
+ffuf -u http://<IP>/FUZZ \
+-w wordlist.txt \
+-rate 50
