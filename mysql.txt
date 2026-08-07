@@ -1,0 +1,102 @@
+# MySQL (Port 3306)
+
+# Port Discovery
+
+nmap -Pn -p3306 <IP>
+nmap -sV -sC -p3306 <IP>
+
+# NSE Scripts
+
+nmap --script mysql-info -p3306 <IP>
+nmap --script mysql-empty-password -p3306 <IP>
+nmap --script mysql-enum -p3306 <IP>
+nmap --script mysql-users -p3306 <IP>
+nmap --script mysql-databases -p3306 <IP>
+nmap --script mysql-variables -p3306 <IP>
+nmap --script mysql-audit -p3306 <IP>
+nmap --script mysql-* -p3306 <IP>
+
+# Banner Grabbing
+
+nc <IP> 3306
+telnet <IP> 3306
+
+# Connect to MySQL
+
+mysql -h <IP> -u root -p
+mysql -h <IP> -u username -p
+
+# Try Blank Password (Authorized Testing Only)
+
+mysql -h <IP> -u root
+
+# Show Current User
+
+SELECT USER();
+
+# Show Current Database
+
+SELECT DATABASE();
+
+# Show MySQL Version
+
+SELECT VERSION();
+
+# List Databases
+
+SHOW DATABASES;
+
+# Select Database
+
+USE database_name;
+
+# List Tables
+
+SHOW TABLES;
+
+# Show Table Structure
+
+DESCRIBE table_name;
+
+# View Data
+
+SELECT * FROM table_name;
+
+# List MySQL Users
+
+SELECT user,host FROM mysql.user;
+
+# Check User Privileges
+
+SHOW GRANTS FOR CURRENT_USER;
+
+# Server Variables
+
+SHOW VARIABLES;
+
+# Server Status
+
+SHOW STATUS;
+
+# Exit MySQL
+
+exit
+
+# Brute Force (Authorized Testing Only)
+
+hydra -L users.txt -P passwords.txt mysql://<IP>
+
+# Nmap Full Enumeration
+
+nmap -A -p3306 <IP>
+
+# Search for Public Exploits
+
+searchsploit mysql
+searchsploit mariadb
+
+# Metasploit
+
+msfconsole
+search mysql
+search mariadb
