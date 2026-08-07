@@ -1,0 +1,121 @@
+# SMB (Ports 139, 445)
+
+# Port Discovery
+
+nmap -Pn -p139,445 <IP>
+nmap -sV -sC -p139,445 <IP>
+
+# NSE Scripts
+
+nmap --script smb-os-discovery -p445 <IP>
+nmap --script smb-enum-shares -p445 <IP>
+nmap --script smb-enum-users -p445 <IP>
+nmap --script smb-enum-domains -p445 <IP>
+nmap --script smb-enum-groups -p445 <IP>
+nmap --script smb-protocols -p445 <IP>
+nmap --script smb-security-mode -p445 <IP>
+nmap --script smb-vuln* -p445 <IP>
+nmap --script smb-* -p445 <IP>
+
+# Banner Grabbing
+
+nc <IP> 445
+telnet <IP> 445
+
+# Full SMB Enumeration
+
+enum4linux -a <IP>
+
+# Enumerate Users
+
+enum4linux -U <IP>
+
+# Enumerate Shares
+
+enum4linux -S <IP>
+
+# Enumerate Groups
+
+enum4linux -G <IP>
+
+# Enumerate Password Policy
+
+enum4linux -P <IP>
+
+# Enumerate Operating System
+
+enum4linux -o <IP>
+
+# List SMB Shares
+
+smbclient -L //<IP> -N
+smbclient -L //<IP> -U guest
+smbclient -L //<IP> -U username
+
+# Connect to a Share
+
+smbclient //<IP>/share -N
+smbclient //<IP>/share -U username
+
+# Useful SMB Commands
+
+pwd
+ls
+dir
+cd
+get file.txt
+mget *
+put test.txt
+mkdir test
+rmdir test
+rm test.txt
+exit
+
+# RPC Enumeration
+
+rpcclient -U "" -N <IP>
+
+# Useful rpcclient Commands
+
+enumdomusers
+enumdomgroups
+queryuser <RID>
+querygroup <RID>
+srvinfo
+getusername
+
+# NetExec (CrackMapExec Replacement)
+
+netexec smb <IP>
+netexec smb <IP> --shares
+netexec smb <IP> --users
+netexec smb <IP> --sessions
+netexec smb <IP> -u '' -p ''
+netexec smb <IP> -u username -p password
+
+# Null Session Test
+
+smbclient -L //<IP> -N
+rpcclient -U "" -N <IP>
+
+# Brute Force (Authorized Testing Only)
+
+hydra -L users.txt -P passwords.txt smb://<IP>
+
+# Nmap Full Enumeration
+
+nmap -A -p139,445 <IP>
+
+# Search for Public Exploits
+
+searchsploit samba
+searchsploit smbd
+searchsploit smb
+
+# Metasploit
+
+msfconsole
+search smb
+search samba
+search ms17
+search eternalblue
