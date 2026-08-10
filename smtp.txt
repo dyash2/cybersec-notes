@@ -1,0 +1,203 @@
+# SMTP (Ports 25, 465, 587)
+
+# Port Discovery
+
+nmap -Pn -p25,465,587 <IP>
+nmap -sV -sC -p25,465,587 <IP>
+
+# SMTP Service Detection
+
+nmap -sV -p25,465,587 <IP>
+nmap -A -p25,465,587 <IP>
+
+# NSE Scripts
+
+nmap --script smtp-commands -p25 <IP>
+nmap --script smtp-enum-users -p25 <IP>
+nmap --script smtp-open-relay -p25 <IP>
+nmap --script smtp-ntlm-info -p25,587 <IP>
+nmap --script smtp-vuln-cve2010-4344 -p25 <IP>
+
+# Run All SMTP NSE Scripts
+
+nmap --script "smtp-*" -p25,465,587 <IP>
+
+# Banner Grabbing
+
+nc -nv <IP> 25
+telnet <IP> 25
+
+# SSL/TLS Banner Grabbing
+
+openssl s_client -connect <IP>:465 -crlf
+openssl s_client -starttls smtp -connect <IP>:25 -crlf
+openssl s_client -starttls smtp -connect <IP>:587 -crlf
+
+# SMTP Manual Enumeration
+
+nc -nv <IP> 25
+
+EHLO attacker.local
+HELO attacker.local
+HELP
+NOOP
+QUIT
+
+# Enumerate SMTP Commands
+
+EHLO attacker.local
+HELP
+
+# User Enumeration - VRFY
+
+VRFY root
+VRFY admin
+VRFY administrator
+VRFY user
+
+# User Enumeration - EXPN
+
+EXPN root
+EXPN admin
+EXPN administrators
+
+# User Enumeration - RCPT TO
+
+MAIL FROM:<test@example.com>
+RCPT TO:<user@example.com>
+
+# SMTP Authentication Check
+
+EHLO attacker.local
+AUTH
+
+# Check Supported Authentication Mechanisms
+
+openssl s_client -starttls smtp -connect <IP>:587 -crlf
+
+EHLO attacker.local
+
+# SMTP Relay Test
+
+nmap --script smtp-open-relay -p25 <IP>
+
+# Manual SMTP Relay Test
+
+EHLO attacker.local
+MAIL FROM:<attacker@external.com>
+RCPT TO:<test@external.com>
+
+# TLS / SSL Enumeration
+
+sslscan <IP>:25
+sslscan <IP>:465
+sslscan <IP>:587
+
+# Test STARTTLS
+
+openssl s_client -starttls smtp -connect <IP>:25 -crlf
+openssl s_client -starttls smtp -connect <IP>:587 -crlf
+
+# Test SMTPS
+
+openssl s_client -connect <IP>:465 -crlf
+
+# SMTP Security Checks
+
+Check for:
+- SMTP banner disclosure
+- SMTP version disclosure
+- VRFY enabled
+- EXPN enabled
+- User enumeration
+- Open relay
+- Weak authentication
+- Anonymous authentication
+- Clear-text authentication
+- STARTTLS support
+- TLS certificate issues
+- Weak TLS versions
+- Weak cipher suites
+- Expired certificate
+- Self-signed certificate
+- Certificate hostname mismatch
+- SMTP command injection
+- Mail header injection
+- Message spoofing
+- Sender address spoofing
+- Recipient validation
+- Rate limiting
+- Brute-force protection
+- Account lockout
+- Connection throttling
+- Anti-spam controls
+
+# SMTP User Enumeration
+
+smtp-user-enum -M VRFY -U users.txt -t <IP>
+
+smtp-user-enum -M EXPN -U users.txt -t <IP>
+
+smtp-user-enum -M RCPT -U users.txt -t <IP>
+
+# SMTP Banner Enumeration
+
+nc -nv <IP> 25
+
+# SMTP Authentication Testing
+
+EHLO attacker.local
+AUTH LOGIN
+
+# Brute Force (Authorized Testing Only)
+
+hydra -L users.txt -P passwords.txt smtp://<IP>
+
+# Nmap Vulnerability Scanning
+
+nmap --script "smtp-vuln-*" -p25,465,587 <IP>
+
+# Search for Public Exploits
+
+searchsploit smtp
+searchsploit postfix
+searchsploit sendmail
+searchsploit exim
+searchsploit qmail
+
+# Metasploit
+
+msfconsole
+
+search smtp
+search postfix
+search sendmail
+search exim
+search smtp auxiliary
+
+# SMTP Enumeration with Nmap
+
+nmap -sV --script smtp-commands,smtp-enum-users,smtp-open-relay \
+-p25,465,587 <IP>
+
+# Full SMTP Enumeration
+
+nmap -A -p25,465,587 <IP>
+sslscan <IP>:465
+sslscan <IP>:587
+smtp-user-enum -M VRFY -U users.txt -t <IP>
+
+# Evidence to Capture
+
+- SMTP banner
+- Mail server software/version
+- Supported SMTP commands
+- Supported authentication mechanisms
+- Valid usernames
+- SMTP relay behavior
+- TLS certificate
+- TLS versions
+- Cipher suites
+- NSE results
+- Vulnerable versions/CVEs
+- Authentication configuration
