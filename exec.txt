@@ -1,0 +1,112 @@
+# EXEC / REXEC (Port 512)
+
+# Port Discovery
+
+nmap -Pn -p512 <IP>
+nmap -sV -sC -p512 <IP>
+
+# Service Detection
+
+nmap -sV -p512 <IP>
+nmap -A -p512 <IP>
+
+# Banner Grabbing
+
+nc -nv <IP> 512
+telnet <IP> 512
+
+# Nmap NSE Enumeration
+
+nmap --script "*rexec*" -p512 <IP>
+nmap --script "*r-services*" -p512 <IP>
+
+# REXEC Connection
+
+rexec <IP> -l username
+
+# REXEC Command Execution
+
+rexec <IP> -l username "id"
+rexec <IP> -l username "whoami"
+rexec <IP> -l username "uname -a"
+
+# Test Authentication
+
+rexec <IP> -l username "id"
+
+# Check for Anonymous / Weak Authentication
+
+rexec <IP> -l ""
+rexec <IP> -l guest "id"
+
+# R-Services Enumeration
+
+nmap -sV -p512,513,514 <IP>
+
+# Check Related R-Services
+
+# 512 - rexec
+# 513 - rlogin
+# 514 - rsh
+
+nmap -sV -p512,513,514 <IP>
+
+# Security Checks
+
+Check for:
+- REXEC service exposed
+- Clear-text authentication
+- Username disclosure
+- Weak authentication
+- Anonymous access
+- Guest access
+- Unrestricted command execution
+- Trust-based authentication
+- Source IP-based authentication
+- Credential interception risk
+- Excessive privileges
+- Root/administrator access
+- Service version disclosure
+
+# Local Command Execution Tests
+
+rexec <IP> -l username "whoami"
+rexec <IP> -l username "id"
+rexec <IP> -l username "hostname"
+rexec <IP> -l username "uname -a"
+
+# Check Privileges
+
+rexec <IP> -l username "id"
+rexec <IP> -l username "sudo -l"
+
+# Search for Public Exploits
+
+searchsploit rexec
+searchsploit r-services
+searchsploit rsh
+searchsploit rlogin
+
+# Metasploit
+
+msfconsole
+
+search rexec
+search r-services
+
+# Full Enumeration
+
+nmap -sC -sV -A -p512 <IP>
+
+# Evidence to Capture
+
+- Port/service information
+- Service banner
+- REXEC version
+- Authentication behavior
+- Valid/invalid username response
+- Command execution result
+- Privilege level
+- Configuration weaknesses
+- Relevant CVE/CWE
+- Screenshots / command output
