@@ -1,0 +1,19 @@
+>>>>>>> SSH (22)
+- use bruteforce to get credentials
+$ hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://10.10.10.10
+
+>>>>>>> SMTP (25)
+ Postfix SMTPD - Postfix mail server
+	Port	Purpose
+	25	    SMTP server-to-server mail
+	587	    Message submission
+	465	    SMTPS / implicit TLS
+
+- It allows the use of VRFY and other command.
+
+TOOL --> smtp-user-enum
+$ smtp-user-enum -M VRFY -U /usr/share/metasploit-framework/data/wordlists/unix_users.txt -t <target-ip>
+
+
+>>>>>>> FINGER (79)
+- Port 79 is the default port for Finger, a protocol that answers “who is on this host and what are they doing” over cleartext TCP

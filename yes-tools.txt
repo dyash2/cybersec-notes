@@ -1,0 +1,70 @@
+Nmap - scanning tool
+ 
+Ffuf - directory finding tool
+Ffuf -u url \
+-w wordlist \
+-mc 200
+ 
+Dirbuster - directory finding tool
+ 
+SSH username@IP
+ 
+telnet IP -port
+ 
+Netcat - banner grabbing 
+To enter shell or reverse shell
+$nc -lnvp 4444
+ 
+RCE - shell.php 
+Upload karo aur Phir Netcat se session start karo
+->GTFOBins 
+->Reverse Shell Generator 
+ 
+Privilege Escalation
+sudo -l
+ls -l
+SQL Injection 
+-> input the script in login 
+-> check the url and add ' unless you don't get something useful from database itself
+-> 
+ 
+FTP 
+-> FTP commands
+$ftp port
+Username : anonymous
+Password : anonymous
+ 
+Command Line Injection 
+ 
+whatweb - bhi use karte hai
+ 
+Nikto - to find vulnerabilities 
+ 
+Curl - bhi use karte hai
+Curl commands for pentesting malum karo
+ 
+Metasploitable Framework (msfconsole) 
+LHOST = kali IP
+RHOST = target IP
+port = random
+ 
+Hydra - brute force
+$Hydra -L users.txt -P pass.txt -f -S port
+ 
+ 
+Common folder directory to check while doing penting 
+ 
+/etc/os-release
+/etc/sudoers
+/etc/passwd
+/etc/shadow - hash stored passwords
+/etc/crontab
+ 
+Wget - kyu use karte hai? 
+ 
+
+Stable shell command
+$python -c 'import pty; pty.spawn("/bin/bash")' 
+
+
+enum4linux - enumeration tool

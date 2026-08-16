@@ -1,0 +1,48 @@
+find / -iname "*flag*" 2>/dev/null
+
+grep -R "FLAG{" / 2>/dev/null
+
+grep -Ri "flag" /opt /var/www /home 2>/dev/null
+
+ often hide flags in places like:
+/var/www/html
+/opt
+/tmp
+/home/user
+/root
+/etc
+/var/backups
+
+
+ labs often include breadcrumbs. For example:
+
+robots.txt
+    ↓
+/backup.zip
+    ↓
+config.php
+    ↓
+DB Password
+    ↓
+SSH Login
+    ↓
+sudo -l
+    ↓
+Root
+
+or
+
+ffuf
+    ↓
+/upload
+    ↓
+Upload shell.php
+    ↓
+Reverse Shell
+    ↓
+find SUID
+    ↓
+GTFOBins
+    ↓
+Root
+

