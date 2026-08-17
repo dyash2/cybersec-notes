@@ -1,0 +1,85 @@
+Server Side Vulnerabilites
+
+>>>... 1) Path Traversal
+It allows an attacker to read arbitary files on the server.
+
+>> Reading arbitrary files via path traversal
+
+add the file path in place of the value of the parameter 
+i.e (parameter=value)
+
+filename=2.jpg
+filename=../../../etc/passwd
+
+here, ../../../ ==> /var/www/images/
+
+
+>>>... 2) Access Control
+
+=) Vertical Privilege Escalation
+--> Escalation of normal-user to admin-user
+
+
+=) Unprotected Functionality
+1) check robots.txt
+2) check javascript script
+
+
+=) Parameter-based access control methods
+1) check hidden field
+2) a cookie
+3) a preset query string parameter
+
+https://insecure-website.com/login/home.jsp?admin=true
+https://insecure-website.com/login/home.jsp?role=1
+
+
+=) Horizontal privilege escalation
+--> Escalation of other user having same privilege level.
+
+1) search for GUID and ID in whole web application
+	- num, char, or both
+
+using IDOR,
+https://insecure-website.com/myaccount?id=123
+
+
+=) Horizontal to vertical privilege escalation
+--> using Parameter-tampering techinque
+
+
+
+
+>>>... 3) Authentication Vulnerabilites
+Authentication -> process of verifying user.
+Authorization -> involves whether that user is allowed to do that action.
+
+Brute Force Attacks
+ > Usernames
+ 	- firstname.lastname@somecompany.com
+ 	- admin
+ 	- administrator
+ > Passwords
+ 	- minimum number of characters
+ 	- mixture of lower and uppercase letters
+	- at least one special character
+
+	for eg: 
+		mypassword, users may try something like Mypassword1! or Myp4$$w0rd
+
+
+Username Enumeration
+ - occurs on login page
+
+Bypassing 2FA
+ - 2 way authentication
+ 	- first is password based
+ 	- second is verfication code
+ - sometimes, the web application doesn't care if you are actually login or not after 1st stage then only it makes the login vulnerable.
+
+
+
+ >>>... 4) Server Side Request Forgery (SSRF)
+ - server-side applications
+ - changing the internal API
+ - change it to http://localhost/admin
