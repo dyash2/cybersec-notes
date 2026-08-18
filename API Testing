@@ -1,0 +1,137 @@
+API Testing
+
+>>>... 1) API Recon
+- identify API endpoints
+- determine how to interact 
+	- input data, both compulsory and optional parameters
+	- types of request API accepts
+	- HTTP methods and media formats
+	- Rate limiting and authentication mechanisms
+- API Documentation
+	- JSON or XML (machine-readable)
+	- Use Burp Scanner to Crawl the API [ Dashboard -> New Scan -> Crawl ]
+	- Use Burp Intruder to find common list of API documentation
+	- Endpoints that refer to API documentation
+		/api
+		/swagger/index.html
+		/openapi.json
+	- Investigate base path
+	 	/api/swagger/v1
+		/api/swagger
+		/api
+	- Extensions for API Crawling : OpenAPI Parser, JS Link Finder BApp
+-review error messages
+
+
+> Identifying HTTP methods
+	
+-> HTTP Methods
+		GET - Retrieves data from a resource.
+		PATCH - Applies partial changes to a resource.
+		OPTIONS - Retrieves information on the types of request methods that can be used on a resource.
+		POST /api/tasks - Creates a new task.
+		PUT - Replace the Entire Resource.
+		DELETE /api/tasks/1 - Deletes a task.
+		HEAD - Retrieve headers only (same as GET without body)
+	- the built-in HTTP verbs list in Burp Intruder. 
+
+-> Identifying supported content types	
+	To change the content type, modify the Content-Type header
+		- use the Content type converter BApp to automatically convert data submitted within requests between XML and JSON. 
+
+	It enables you to,
+	- trigger errors that disclose useful info
+	- bypass flawed defeneses
+	- taking advantage of differences in processing logic
+		JSON to XML (suspeticble to injection attack)
+
+
+-> The small worflow of API Testing is:	
+
+		Find endpoint
+		      ↓
+		Try OPTIONS
+		      ↓
+		Try other methods
+		      ↓
+		Read error messages
+		      ↓
+		Discover hidden functionality
+
+
+-> Using Intruder to find hidden endpoints
+	- once you identified endpoints,
+		PUT /api/user/update
+		 - add a payload to the /update position of the path
+		 - use wordlists to find the hidden endpoints
+
+-> Extensions for finding hidden parameters : Param miner BApp
+
+
+
+>>>... 2) Mass assigment vulnerabilites
+- aka Auto-Binding
+- using internal object we can create/update hidden parameters
+
+Internal Object
+
+		User {
+			id,
+			name,
+			email,
+			isAdmin
+		}
+
+The developer expects users to change only:
+
+		{
+		"name": "Yash",
+		"email": "yash@example.com"
+		}
+
+But because of mass assignment, an attacker can send:
+
+		{
+		"name": "Yash",
+		"email": "yash@example.com",
+		"isAdmin": true
+		}
+
+The framework automatically updates:
+
+		user.isAdmin = true;
+
+
+
+				Find API Endpoint
+					↓
+				Inspect Response Object
+					↓
+				Guess Hidden Fields
+				(isAdmin, role, price, discount, credit, etc.)
+					↓
+				Test PATCH / PUT Request
+					↓
+				Send Hidden Parameter
+					↓
+				Framework Auto-Binds Data
+					↓
+				Internal Object Updated
+					↓
+				Privilege / Business Logic Abuse
+
+
+>>>... 3) Server-side parameter pollution
+- It happens when:
+	- A user sends input to a website.
+	- The website uses that input to make a request to an internal API.
+	- The website does not properly sanitize or encode the input.
+	- The attacker injects extra parameters into the internal API request.
+
+
+-> Testing for server-side parameter pollution in the query string
+- place the query string characters in the internal API and observer the response
+	#, &, and =
+
+-> Truncating query strings
+- 
