@@ -1,0 +1,53 @@
+# Port Discovery
+nmap -Pn -p10001 <IP>
+nmap -sV -sC -p10001 <IP>
+
+# Nmap NSE Scripts
+nmap --script banner -p10001 <IP>
+nmap --script version -p10001 <IP>
+nmap --script vuln -p10001 <IP>
+nmap --script safe -p10001 <IP>
+
+# Banner Grabbing / Service Identification
+nc -nv <IP> 10001
+telnet <IP> 10001
+nmap -sV --version-intensity 9 -p10001 <IP>
+
+# Protocol / Service Detection
+nmap -sV --version-all -p10001 <IP>
+nmap -A -p10001 <IP>
+
+# TCP Connection Testing
+curl -v telnet://<IP>:10001
+timeout 10 nc -nv <IP> 10001
+
+# Manual Enumeration
+nc -nv <IP> 10001
+telnet <IP> 10001
+nmap -Pn -p10001 --reason <IP>
+
+# Service/Configuration Checks
+nmap -sV -p10001 --script banner <IP>
+nmap -sV -p10001 --script vuln <IP>
+
+# Search for Public Exploits
+searchsploit scp
+searchsploit ssh
+searchsploit openssh
+searchsploit "scp config"
+
+# Metasploit
+msfconsole
+search scp
+search ssh
+search openssh
+
+# Protocol/Behaviour Testing
+nmap -Pn -p10001 --script banner,ssh2-enum-algos <IP>
+nmap -Pn -p10001 --script ssh-hostkey <IP>
+
+# Manual Enumeration
+nc -nv <IP> 10001
+telnet <IP> 10001
+nmap -sV -sC -p10001 <IP>
+nmap -Pn -p10001 --script vuln <IP>
