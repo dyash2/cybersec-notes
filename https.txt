@@ -1,0 +1,86 @@
+# Port Discovery
+nmap -Pn -p443 <IP>
+nmap -sV -sC -p443 <IP>
+
+# Nmap NSE Scripts
+nmap --script ssl-cert -p443 <IP>
+nmap --script ssl-enum-ciphers -p443 <IP>
+nmap --script ssl-dh-params -p443 <IP>
+nmap --script ssl-heartbleed -p443 <IP>
+nmap --script ssl-poodle -p443 <IP>
+nmap --script ssl-ccs-injection -p443 <IP>
+nmap --script ssl-known-key -p443 <IP>
+nmap --script http-title -p443 <IP>
+nmap --script http-headers -p443 <IP>
+nmap --script http-enum -p443 <IP>
+nmap --script http-methods -p443 <IP>
+nmap --script http-auth* -p443 <IP>
+nmap --script http-vuln* -p443 <IP>
+nmap --script http-* -p443 <IP>
+
+# Banner Grabbing
+curl -k -I https://<IP>
+curl -k -v https://<IP>
+wget --no-check-certificate https://<IP>
+
+# Web Fingerprinting
+whatweb https://<IP>
+webtech -u https://<IP>
+httpx -u https://<IP> -tls-grab -status-code -title -tech-detect
+
+# Directory Enumeration
+gobuster dir -k -u https://<IP> -w /usr/share/wordlists/dirb/common.txt
+ffuf -k -u https://<IP>/FUZZ -w /usr/share/wordlists/dirb/common.txt
+dirsearch -u https://<IP> --skip-on-status 404
+
+# Robots & Sitemap
+curl -k https://<IP>/robots.txt
+curl -k https://<IP>/sitemap.xml
+
+# Nikto Scan
+nikto -h https://<IP> -ssl
+
+# SSL/TLS Enumeration
+sslscan <IP>:443
+testssl.sh <IP>:443
+nmap --script ssl-* -p443 <IP>
+
+# SSL Certificate
+openssl s_client -connect <IP>:443 -showcerts
+openssl s_client -connect <IP>:443 </dev/null 2>/dev/null | openssl x509 -noout -text
+openssl s_client -connect <IP>:443 </dev/null 2>/dev/null | openssl x509 -noout -dates
+openssl s_client -connect <IP>:443 </dev/null 2>/dev/null | openssl x509 -noout -issuer -subject
+
+# HTTP Security Headers
+curl -k -I https://<IP> | grep -iE 'Strict-Transport-Security|Content-Security-Policy|X-Frame-Options|X-Content-Type-Options|Referrer-Policy|Permissions-Policy|Set-Cookie'
+
+# Screenshot
+eyewitness --web -f urls.txt
+gowitness scan single --url https://<IP>
+
+# Search for Public Exploits
+searchsploit apache
+searchsploit nginx
+searchsploit http
+searchsploit openssl
+searchsploit tomcat
+
+# Metasploit
+msfconsole
+search http
+search https
+search apache
+search nginx
+search tomcat
+search wordpress
+search drupal
+search joomla
+
+# Manual Enumeration
+view-source:https://<IP>
+curl -k https://<IP>
+curl -k https://<IP>/robots.txt
+curl -k https://<IP>/server-status
+curl -k https://<IP>/.git/
+curl -k https://<IP>/.env
+curl -k https://<IP>/phpinfo.php
