@@ -197,10 +197,9 @@ Step 1 — Find origin delimiters
    /list;AAA same as /list → ; is an origin delimiter.
 
 Step 2 — Test the delimiter against the cache
-   - Add a static extension:
+. Add a static extension:
       /list;AAA.js
-
-If the response is cached:
+. If the response is cached:
    Cache does not treat ; as a delimiter.
    Cache sees the full path ending in .js.
    .js is a cacheable static extension.
@@ -214,13 +213,16 @@ Step 4 — Automate with Burp Intruder
    Disable automatic character encoding:
    Payloads → Payload encoding → turn off automated encoding
 
-Overall Flow
-Find Origin Delimiter
-        ↓
-Test Delimiter + Static Extension
-        ↓
-Cache stores response?
-        ↓
-Yes → Cache & Origin interpret delimiter differently
-        ↓
-Potential Web Cache Deception
+> Construct the Exploit
+- Once you find a delimiter used by the origin but not the cache, add a static extension:
+   /settings/users/list;aaa.js
+   Cache  → /settings/users/list;aaa.js → sees .js → caches response
+   Origin → ; is delimiter → /settings/users/list → returns dynamic data
+Result: Dynamic sensitive data is stored in the cache → Web Cache Deception.
+
+- Important Points
+ . The same delimiter behavior may work across multiple endpoints on the same server.
+ . Some delimiters may be modified by the browser:
+      { } < > → URL-encoded
+      # → truncates the URL
+ . If the cache/origin decodes encoded characters, an encoded version may work.
