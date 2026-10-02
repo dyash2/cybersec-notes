@@ -1,0 +1,169 @@
+1) Web Caches 
+- A web cache is a system that sits between the origin server and the user. When a client requires a static resource, the request is first directed to the cache. If the cache doesn't contain a copy of the resource (cache miss), the request is forwarded to the origin server, which processes and responds to the request.
+- The response is then sent to cache before being sent to the user.
+- When a request for the same static resource is made in the future, the cache serves the stored copy of the response directly to the user (cache hit).
+
+2) Cache Keys
+- When a cache receives an HTTP request, it generates a cache key from elements such as the URL path, query parameters, headers, and content type. If the cache key matches a previous request, the cache considers them equivalent and serves the cached response instead of forwarding the request to the origin server.
+
+3) Cache rules
+- Cache rules determines what can be cached and for how long.
+- Often set up to store static resources.
+- Dynamic content is not cached as it's contain sensitive info.
+
+
+> Types of Cache rules:
+- The below rules are particuarly based on defined strings in the URL path
+ . Static file extension rules -> .css, .js
+ . Static directory rules -> /static, /assets
+ . File name rules -> robots.txt, favicon.ico
+
+
+>>>>> Constructing a web cache deception attack
+1. Find a target endpoint that returns a dynamic response containing sensitive data. Prefer `GET`, `HEAD`, or `OPTIONS` requests, as state-changing (POST,PUT) requests are generally not cached.
+2. Find a discrepancy between how the cache and origin server parse the URL, such as differences in resource mapping, delimiters, or path normalization.
+3. Craft a malicious URL that tricks the cache into storing the dynamic response. When the victim visits it, their response is cached. You can then request the same URL to retrieve the cached response containing their data. Use **Burp** rather than the browser to avoid redirects or other behavior hiding the vulnerability.
+
+  Note :- 
+    In this context :
+    A discrepancy means the cache and the origin server interpret the same URL differently.
+
+
+>> Using a Cache Buster
+A cache buster ensures each request gets a unique cache key, preventing old cached responses from affecting testing.
+
+- Add a changing query parameter:
+/my-account?cb=12345
+/my-account?cb=67890
+
+You can automate this in Burp → Param Miner → Settings → Add dynamic cachebuster.
+Burp then adds a unique query string to each request, which can be viewed in the Logger tab.
+
+
+>> Detecting Cached Responses
+Check response headers and response times:
+ . X-Cache: hit → Response served from cache.
+ . X-Cache: miss → Not cached; fetched from origin. Send again to check if it becomes hit.
+  . X-Cache: dynamic → Dynamically generated; generally not cached.
+  . X-Cache: refresh → Cached response was outdated and refreshed.
+  . Cache-Control: public, max-age>0 → Response is cacheable, but doesn't guarantee it was cached.
+A faster response on repeated requests may indicate it came from the cache
+
+              WEB CACHE DECEPTION
+                       │
+                       ▼
+        ① FIND DYNAMIC ENDPOINT
+          /my-account
+          ↓
+     Contains sensitive data?
+          │
+          ▼
+        GET / HEAD / OPTIONS
+                       │
+                       ▼
+        ② FIND DISCREPANCY
+     ┌─────────────────────────┐
+     │ Cache sees URL ≠ Origin │
+     │ Server sees URL         │
+     └─────────────────────────┘
+                       │
+                       ▼
+        ③ CRAFT MALICIOUS URL
+             /my-account/x.css
+                       │
+                       ▼
+        ④ ADD CACHE BUSTER
+       ?cb=12345 → ?cb=67890
+                       │
+                       ▼
+        ⑤ CHECK CACHE BEHAVIOR
+             ┌────────┴────────┐
+             ▼                 ▼
+        X-Cache: miss      X-Cache: hit
+             │                 │
+       Origin response     Cached response
+             │                 │
+             └────────┬────────┘
+                      ▼
+             ⑥ VICTIM VISITS URL
+                      │
+                      ▼
+             Victim's dynamic
+             response gets cached
+                      │
+                      ▼
+             ⑦ REQUEST SAME URL
+                      │
+                      ▼
+             Retrieve cached
+             victim data
+
+
+>>>>> Exploiting static extension cache rules
+Caches often cache files with extensions like .css and .js. If the cache and origin server interpret the URL differently, an attacker may add a static extension to a dynamic URL.
+
+Cache → sees .css → caches response
+Origin → ignores .css → returns dynamic data
+
+Key idea: Trick the cache into caching a dynamic response by making the URL look like a static resource.
+
+
+>>>>> Using path mapping discrepancies
+- URL Path Mapping
+URL path mapping = how a server maps a URL path to a resource, file, or application endpoint.
+
+Common styles
+1. Traditional mapping
+- The URL reprsents a directory/file structure.
+URL → Physical file/resource
+Example:
+/css/style.css → style.css
+http://example.com/path/in/filesystem/resource.html
+
+2. REST-style mapping
+- The URL represents a logical resource, not a physical file path.
+URL → Logical resource → Application → Data
+Example:
+/users/123 → User endpoint → User #123
+http://example.com/path/resource/param1/param2
+
+Continued (Url mapping discrepancy):-
+ -> If the cache and origin server interpret the URL differently, web cache deception can occur.
+
+Example:
+/user/123/profile/wcd.css
+  . Origin (REST): Treats it as /user/123/profile → returns user profile data.
+  . Cache (traditional): Sees wcd.css → considers it a static CSS file.
+  If the cache stores .css responses → profile data gets cached as a CSS file.
+
+Key idea:
+Cache sees static file ≠ Origin sees dynamic endpoint → Web Cache Deception
+
+>> Exploiting Path Mapping Discrepancies
+1. Test origin mapping
+   * Add an arbitrary path segment:
+     /api/orders/123 → /api/orders/123/foo
+   * If the same sensitive data is returned → origin ignores the extra segment.
+
+2. Test cache mapping
+   * Add a static extension:
+     /api/orders/123/foo → /api/orders/123/foo.js
+   * If it gets cached:
+     * Cache recognizes the .js extension.
+     * Cache has a rule for .js responses.
+
+3. Try other extensions
+   * .css, .ico, .exe, etc.
+
+4. Exploit
+   * Craft a URL where:
+     Origin → dynamic sensitive response
+     Cache → static file → caches response
+
+Key idea:
+Origin ignores extra path → Cache recognizes static extension → Dynamic response gets cached → Web Cache Deception
+
+Tools: Burp Scanner and Web Cache Deception Scanner BApp can detect these issues.
+
+
+
