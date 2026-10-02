@@ -166,4 +166,61 @@ Origin ignores extra path → Cache recognizes static extension → Dynamic resp
 Tools: Burp Scanner and Web Cache Deception Scanner BApp can detect these issues.
 
 
+>>>>> Delimiter Discrepancies
+- Delimiter: A delimiter is a character that separates or marks different parts of a URL.
+- Delimiter discrepancy: Cache and origin interpret the same delimiter differently.
 
+Example: /profile;foo.css
+  . Origin (Spring): ; is a delimiter → treats it as /profile → returns profile data.
+  . Cache: treats the full path as /profile;foo.css → sees .css → caches the response.
+Result: Dynamic sensitive data is cached as a static file → Web Cache Deception.
+
+Ruby on Rails uses (. to determine the response format):
+ . /profile → HTML → returns profile data.
+ . /profile.css → CSS format → no CSS formatter → error.
+ . /profile.ico → .ico not recognized → falls back to HTML → returns profile data.
+If the cache stores .ico responses, it may cache the profile data as a static file.
+
+Encoded delimiter: /profile%00foo.js
+ . Origin (OpenLiteSpeed): %00 is a delimiter → interprets the path as /profile → returns profile data.
+ . Cache (Akamai/Fastly): May treat %00foo.js as part of the path → sees .js → may cache the response.
+Result: Dynamic profile data can be cached as a static .js resource.
+
+Key idea:
+Cache interpretation ≠ Origin interpretation → Dynamic response gets cached → Web Cache Deception
+
+>> Exploiting delimiter discrepancies
+Step 1 — Find origin delimiters  
+   /list
+   /listAAA
+   /list;AAA
+   /list;AAA same as /list → ; is an origin delimiter.
+
+Step 2 — Test the delimiter against the cache
+   - Add a static extension:
+      /list;AAA.js
+
+If the response is cached:
+   Cache does not treat ; as a delimiter.
+   Cache sees the full path ending in .js.
+   .js is a cacheable static extension.
+
+Step 3 — Test more characters & extensions
+   Test all ASCII characters as possible delimiters.
+   Try extensions: .js, .css, .ico, .exe.
+
+Step 4 — Automate with Burp Intruder
+   Use Burp Intruder to test delimiter characters quickly.
+   Disable automatic character encoding:
+   Payloads → Payload encoding → turn off automated encoding
+
+Overall Flow
+Find Origin Delimiter
+        ↓
+Test Delimiter + Static Extension
+        ↓
+Cache stores response?
+        ↓
+Yes → Cache & Origin interpret delimiter differently
+        ↓
+Potential Web Cache Deception
